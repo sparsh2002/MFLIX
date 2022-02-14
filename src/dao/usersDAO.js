@@ -61,7 +61,7 @@ export default class UsersDAO {
       // TODO Ticket: Durable Writes
       // Use a more durable Write Concern for this operation.
 
-      await users.insertOne({ ...userInfo })
+      await users.insertOne({ ...userInfo } ,{w:1})
       return { success: true }
 
     } catch (e) {
