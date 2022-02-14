@@ -54,6 +54,8 @@ export default class MoviesDAO {
     match one or more values of a specific field.
     */
 
+
+
     let cursor
     try {
       // TODO Ticket: Projection
@@ -61,7 +63,13 @@ export default class MoviesDAO {
       // and _id. Do not put a limit in your own implementation, the limit
       // here is only included to avoid sending 46000 documents down the
       // wire.
-      cursor = await movies.find().limit(1)
+      cursor = await movies.find({
+        countries: {
+          $in: countries
+        }
+      }).project({
+        title: 1
+      })
     } catch (e) {
       console.error(`Unable to issue find command, ${e}`)
       return []
@@ -104,21 +112,28 @@ export default class MoviesDAO {
    * @param {string[]} genre - The genres to match with.
    * @returns {QueryParams} The QueryParams for genre search
    */
-  static genreSearchQuery(genre) {
+  static  genreSearchQuery(genre) {
     /**
     Ticket: Text and Subfield Search
 
     Given an array of one or more genres, construct a query that searches
     MongoDB for movies with that genre.
     */
+    
 
     const searchGenre = Array.isArray(genre) ? genre : genre.split(", ")
 
     // TODO Ticket: Text and Subfield Search
     // Construct a query that will search for the chosen genre.
-    const query = {}
+    const query = {
+      genres: {
+        $in: searchGenre
+      }
+    }
     const project = {}
     const sort = DEFAULT_SORT
+
+   
 
     return { query, project, sort }
   }
@@ -259,7 +274,7 @@ export default class MoviesDAO {
 
     // TODO Ticket: Paging
     // Use the cursor to only return the movies that belong on the current page
-    const displayCursor = cursor.limit(moviesPerPage)
+    const displayCursor = cursor.limit(moviesPerPage).skip(moviesPerPage * page)
 
     try {
       const moviesList = await displayCursor.toArray()
