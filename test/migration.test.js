@@ -11,6 +11,8 @@ describe("Migration", () => {
       _id: ObjectId("573a1391f29313caabcd82da"),
       lastupdated: { $type: "date" },
     })
-    expect(movie).not.toBeNull()
+    // expect(movie).not.toBeNull()
+    expect(movie).toBeNull()
+
   })
 })
